@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacari - Más Allá de la Barra</title>
+    <meta name="description" content="Descubre el mundo de Pacari. Recetas exclusivas, cata y regalos con el mejor chocolate orgánico de Ecuador.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="https://i.imgur.com/IzwPLYe.png" alt="Pacari Logo" class="brand-logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#about">Nuestra Historia</a></li>
+            <li><a href="#recipes">Recetas y Experiencias</a></li>
+            <li><a href="#gift">Asistente de Regalos</a></li>
+        </ul>
+    </nav>
+
+    <!-- 1. Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg">
+            <!-- Si tienes un video, renómbralo a video-hero.mp4 y ponlo en la carpeta medios -->
+            <video autoplay muted loop playsinline id="hero-video">
+                <source src="./medios/Chocolate_Melting_Slow_Motion_Video.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title">El chocolate, más allá de la barra</h1>
+            <p class="hero-subtitle">Descubre recetas, catas y regalos con el mejor cacao orgánico del mundo.</p>
+            <div class="hero-actions">
+                <a href="#recipes" class="btn btn-primary">Explorar Recetas</a>
+                <a href="#gift" class="btn btn-secondary">Encuentra el Regalo Ideal</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Sobre Pacari (Visual Storytelling) -->
+    <section class="about" id="about">
+        <div class="container">
+            <h2 class="section-title">El Origen del Sabor</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="icon-wrapper">🌱</div>
+                    <h3>Comercio Justo y Directo</h3>
+                    <p>Trabajamos directamente con agricultores locales, garantizando prácticas sostenibles y un precio justo desde el árbol hasta la barra.</p>
+                </div>
+                <div class="about-card">
+                    <div class="icon-wrapper">🌍</div>
+                    <h3>Impacto Global</h3>
+                    <p>Reconocidos internacionalmente por nuestra alta calidad y compromiso con el medio ambiente, llevando el cacao ecuatoriano al mundo.</p>
+                </div>
+                <div class="about-card">
+                    <div class="icon-wrapper">🍫</div>
+                    <h3>100% Orgánico</h3>
+                    <p>Cada producto celebra la pureza y los sabores únicos de nuestra tierra, sin químicos ni procesos artificiales.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Experiencia y Recetario -->
+    <section class="recipes" id="recipes">
+        <div class="container">
+            <h2 class="section-title">Experiencias y Recetas</h2>
+            
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="postres">Postres</button>
+                <button class="filter-btn" data-filter="bebidas">Bebidas</button>
+                <button class="filter-btn" data-filter="gourmet">Gourmet</button>
+                <button class="filter-btn" data-filter="cata">Cata de Chocolates</button>
+            </div>
+
+            <div class="recipes-grid" id="recipes-grid">
+                <!-- Recipe Cards will be rendered by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Recipe Modal -->
+    <div class="recipe-modal" id="recipe-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- 4. Asistente de Regalos -->
+    <section class="gift-assistant" id="gift">
+        <div class="container">
+            <h2 class="section-title">Asistente de Regalos</h2>
+            <p class="section-subtitle">Encuentra la combinación perfecta para esa persona especial.</p>
+            
+            <div class="wizard-container" id="gift-wizard">
+                <div class="wizard-progress">
+                    <span class="progress-dot active"></span>
+                    <span class="progress-dot"></span>
+                    <span class="progress-dot"></span>
+                </div>
+                
+                <!-- Step 1 -->
+                <div class="wizard-step active" id="step-1">
+                    <h3>¿Cuál es la ocasión?</h3>
+                    <div class="options-grid occasion-options">
+                        <button class="option-card" data-occasion="cumpleanos">🎂 Cumpleaños</button>
+                        <button class="option-card" data-occasion="aniversario">❤️ Aniversario</button>
+                        <button class="option-card" data-occasion="agradecimiento">🙏 Agradecimiento</button>
+                        <button class="option-card" data-occasion="corporativo">💼 Corporativo</button>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="wizard-step" id="step-2">
+                    <h3>¿Cuál es tu presupuesto?</h3>
+                    <div class="options-grid budget-options">
+                        <button class="option-card" data-budget="bajo">$10 - $25</button>
+                        <button class="option-card" data-budget="medio">$25 - $50</button>
+                        <button class="option-card" data-budget="alto">Más de $50</button>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="wizard-step" id="step-results">
+                    <h3>El Regalo Ideal</h3>
+                    <div class="gift-results" id="gift-results-container">
+                        <!-- Loaded by JS -->
+                    </div>
+                    <button class="btn btn-secondary restart-btn" id="restart-wizard">Volver a intentar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <img src="https://i.imgur.com/IzwPLYe.png" alt="Pacari Logo Dark" class="footer-logo">
+            <p>Desarrollo de una Aplicación Interactiva de Recetas y Asistente de Regalos con Chocolate Pacari.</p>
+            <p class="credits">Equipo Desarrollador: Mateo Delgado, Ignacio Merino, David Puebla y Juan Diego Pavón (Gerente del proyecto)</p>
+        </div>
+    </footer>
+
+    <script src="./main.js"></script>
+</body>
+</html>
