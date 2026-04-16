@@ -1,14 +1,48 @@
-// Navbar Scroll Effect
-const navbar = document.querySelector('.navbar');
+/* ══════════════════════════════════════════
+   PACARI — main.js  (Mobile Enhanced)
+   ══════════════════════════════════════════ */
+
+// ── Navbar scroll effect ──
+const navbar   = document.getElementById('navbar');
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+
 window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+// ── Hamburger / Mobile Menu ──
+function openMenu() {
+    mobileMenu.classList.add('open');
+    hamburger.classList.add('open');
+    hamburger.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeMenu() {
+    mobileMenu.classList.remove('open');
+    hamburger.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+}
+
+hamburger.addEventListener('click', () => {
+    mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
 });
 
-// Recipes Data Base
+// Close menu when a mobile nav link is clicked
+document.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.addEventListener('click', closeMenu);
+});
+
+// Close with Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+});
+
+// ═══════════════════════════════════════════
+//  RECIPES DATA
+// ═══════════════════════════════════════════
 const recipes = [
     {
         id: 1,
@@ -152,7 +186,7 @@ const recipes = [
     },
     {
         id: 11,
-        title: 'Maridaje Queos & Cacao',
+        title: 'Maridaje Quesos & Cacao',
         category: 'cata',
         image: './medios/cata-quesos.jpg.png',
         time: 'Variable',
@@ -180,136 +214,138 @@ const recipes = [
     }
 ];
 
-// Render Recipes
+// ═══════════════════════════════════════════
+//  RENDER RECIPES
+// ═══════════════════════════════════════════
 const recipesGrid = document.getElementById('recipes-grid');
-const filterBtns = document.querySelectorAll('.filter-btn');
+const filterBtns  = document.querySelectorAll('.filter-btn');
 
 function renderRecipes(filter = 'all') {
     recipesGrid.innerHTML = '';
     const filtered = filter === 'all' ? recipes : recipes.filter(r => r.category === filter);
-    
+
     filtered.forEach(recipe => {
         const card = document.createElement('div');
         card.className = 'recipe-card';
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', recipe.title);
         card.innerHTML = `
             <div class="recipe-img-container">
-                <img src="${recipe.image}" alt="${recipe.title}">
+                <img src="${recipe.image}" alt="${recipe.title}" loading="lazy">
             </div>
             <div class="recipe-content">
                 <span class="recipe-tag">${recipe.category.toUpperCase()}</span>
                 <h3 class="recipe-title">${recipe.title}</h3>
-                <p>Tiempo: ${recipe.time} | Estrella: ${recipe.product}</p>
+                <p class="recipe-meta">⏱ ${recipe.time} &middot; ⭐ ${recipe.product}</p>
             </div>
         `;
         card.addEventListener('click', () => openModal(recipe));
+        card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') openModal(recipe); });
         recipesGrid.appendChild(card);
     });
 }
 
-// Initial render
 renderRecipes();
 
-// Filter Logic
 filterBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
         filterBtns.forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        renderRecipes(e.target.dataset.filter);
+        e.currentTarget.classList.add('active');
+        renderRecipes(e.currentTarget.dataset.filter);
     });
 });
 
-// Modal Logic
-const modal = document.getElementById('recipe-modal');
-const modalBody = document.getElementById('modal-body');
-const closeModalBtn = document.querySelector('.close-modal');
+// ═══════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════
+const modal         = document.getElementById('recipe-modal');
+const modalBody     = document.getElementById('modal-body');
+const closeModalBtn = document.getElementById('close-modal');
 
 function openModal(recipe) {
     modalBody.innerHTML = `
         <div class="modal-body-layout">
             <div>
-                <img src="${recipe.image}" alt="${recipe.title}" class="modal-img">
+                <img src="${recipe.image}" alt="${recipe.title}" class="modal-img" loading="lazy">
             </div>
             <div>
-                <h2 style="color:var(--color-primary); margin-bottom:1rem; font-family:var(--font-heading)">${recipe.title}</h2>
-                <p><strong>Producto Destacado:</strong> ${recipe.product}</p>
-                <h4 style="margin-top:1.5rem; margin-bottom:0.5rem">Ingredientes</h4>
-                <ul>
-                    ${recipe.ingredients.map(i => `<li style="margin-left:1.5rem">${i}</li>`).join('')}
+                <h2 style="color:var(--color-primary);margin-bottom:0.75rem;font-family:var(--font-heading)">${recipe.title}</h2>
+                <p style="font-size:0.9rem;color:#666;margin-bottom:1.25rem"><strong>Producto destacado:</strong> ${recipe.product} &nbsp;·&nbsp; ⏱ ${recipe.time}</p>
+                <h4 style="margin-bottom:0.5rem;color:var(--color-primary)">Ingredientes</h4>
+                <ul style="padding-left:1.25rem;margin-bottom:1.25rem">
+                    ${recipe.ingredients.map(i => `<li style="margin-bottom:0.3rem">${i}</li>`).join('')}
                 </ul>
-                <h4 style="margin-top:1.5rem; margin-bottom:0.5rem">Preparación</h4>
-                <ol>
-                    ${recipe.steps.map(s => `<li style="margin-left:1.5rem; margin-bottom:0.5rem">${s}</li>`).join('')}
+                <h4 style="margin-bottom:0.5rem;color:var(--color-primary)">Preparación</h4>
+                <ol style="padding-left:1.25rem">
+                    ${recipe.steps.map(s => `<li style="margin-bottom:0.5rem">${s}</li>`).join('')}
                 </ol>
-                <a href="https://paccari.com/tienda/" target="_blank" class="btn btn-primary" style="margin-top:2rem; width:100%; text-align:center;">Comprar Producto en Paccari</a>
+                <a href="https://paccari.com/tienda/" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:2rem;width:100%;text-align:center;display:flex">Comprar en Pacari →</a>
             </div>
         </div>
     `;
     modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
-closeModalBtn.addEventListener('click', () => {
+function closeModal() {
     modal.classList.remove('active');
-});
+    document.body.style.overflow = '';
+}
 
-modal.addEventListener('click', (e) => {
-    if (e.target === modal) modal.classList.remove('active');
-});
+closeModalBtn.addEventListener('click', closeModal);
+modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-// Gift Assistant Wizard
-const wizard = {
-    occasion: null,
-    budget: null
-};
+// ═══════════════════════════════════════════
+//  GIFT ASSISTANT WIZARD
+// ═══════════════════════════════════════════
+const wizard = { occasion: null, budget: null };
 
-const g_occasions = document.querySelectorAll('.occasion-options .option-card');
-const g_budgets = document.querySelectorAll('.budget-options .option-card');
-const step1 = document.getElementById('step-1');
-const step2 = document.getElementById('step-2');
-const stepResults = document.getElementById('step-results');
+const step1        = document.getElementById('step-1');
+const step2        = document.getElementById('step-2');
+const stepResults  = document.getElementById('step-results');
 const resultsContainer = document.getElementById('gift-results-container');
-const restartBtn = document.getElementById('restart-wizard');
-const dots = document.querySelectorAll('.progress-dot');
+const restartBtn   = document.getElementById('restart-wizard');
+const dots         = document.querySelectorAll('.progress-dot');
 
 function updateProgress(index) {
-    if (dots.length) {
-        dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
-    }
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
 }
 
-// ... giftSuggestions map remains the same but avoiding large chunk replacements, let's keep the rest ...
 const giftSuggestions = {
     bajo: [
-        {name: "Barra Hierbaluisa + Nibs", desc: "Detalle fresco y andino.", img: "./medios/regalo-bajo-1.jpg.png"},
-        {name: "Barra Rosa Andina", desc: "Regalo floral delicado.", img: "./medios/regalo-bajo-2.jpg.png"},
-        {name: "Barra Sal de Cuzco", desc: "Experiencia salino-dulce.", img: "./medios/regalo-bajo-3.jpg.png"},
-        {name: "Nibs Gourmet", desc: "Para agregar textura crocante.", img: "./medios/regalo-bajo-4.jpg.png"}
+        { name: 'Barra Hierbaluisa + Nibs', desc: 'Detalle fresco y andino.',      img: './medios/regalo-bajo-1.jpg.png' },
+        { name: 'Barra Rosa Andina',         desc: 'Regalo floral delicado.',        img: './medios/regalo-bajo-2.jpg.png' },
+        { name: 'Barra Sal de Cuzco',        desc: 'Experiencia salino-dulce.',      img: './medios/regalo-bajo-3.jpg.png' },
+        { name: 'Nibs Gourmet',              desc: 'Para añadir textura crocante.',  img: './medios/regalo-bajo-4.jpg.png' },
     ],
     medio: [
-        {name: "Caja Regalo Orígenes", desc: "Muestra de diferentes regiones.", img: "./medios/regalo-medio-1.jpg.png"},
-        {name: "Kit de Cata Básica", desc: "Aprende a catar cacao.", img: "./medios/regalo-medio-2.jpg.png"},
-        {name: "Trufas y Uvillas", desc: "Sensaciones frutales y cacao.", img: "./medios/regalo-medio-3.jpg.png"},
-        {name: "Pack Aventura Andina", desc: "Sabores andinos emblemáticos.", img: "./medios/regalo-medio-4.jpg.png"}
+        { name: 'Caja Regalo Orígenes', desc: 'Muestra de diferentes regiones.', img: './medios/regalo-medio-1.jpg.png' },
+        { name: 'Kit de Cata Básica',   desc: 'Aprende a catar cacao.',          img: './medios/regalo-medio-2.jpg.png' },
+        { name: 'Trufas y Uvillas',     desc: 'Sensaciones frutales y cacao.',   img: './medios/regalo-medio-3.jpg.png' },
+        { name: 'Pack Aventura Andina', desc: 'Sabores andinos emblemáticos.',   img: './medios/regalo-medio-4.jpg.png' },
     ],
     alto: [
-        {name: "Colección Cobre", desc: "Exquisita caja premium.", img: "./medios/regalo-alto-1.jpg.png"},
-        {name: "Gift Card Pacari", desc: "Experiencia de libre elección.", img: "./medios/regalo-alto-2.jpg.png"},
-        {name: "Club de Suscripción", desc: "Un regalo que llega cada mes.", img: "./medios/regalo-alto-3.jpg.png"},
-        {name: "Cesta Degustación Total", desc: "El máximo lujo del chocolate.", img: "./medios/regalo-alto-4.jpg.png"}
-    ]
+        { name: 'Colección Cobre',         desc: 'Exquisita caja premium.',            img: './medios/regalo-alto-1.jpg.png' },
+        { name: 'Gift Card Pacari',        desc: 'Experiencia de libre elección.',     img: './medios/regalo-alto-2.jpg.png' },
+        { name: 'Club de Suscripción',     desc: 'Un regalo que llega cada mes.',      img: './medios/regalo-alto-3.jpg.png' },
+        { name: 'Cesta Degustación Total', desc: 'El máximo lujo del chocolate.',      img: './medios/regalo-alto-4.jpg.png' },
+    ],
 };
 
-g_occasions.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        wizard.occasion = e.target.dataset.occasion;
+document.querySelectorAll('.occasion-options .option-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+        wizard.occasion = btn.dataset.occasion;
         step1.classList.remove('active');
         step2.classList.add('active');
         updateProgress(1);
     });
 });
 
-g_budgets.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        wizard.budget = e.target.dataset.budget;
+document.querySelectorAll('.budget-options .option-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+        wizard.budget = btn.dataset.budget;
         step2.classList.remove('active');
         showResults();
         updateProgress(2);
@@ -317,27 +353,27 @@ g_budgets.forEach(btn => {
 });
 
 function showResults() {
-    const suggestions = giftSuggestions[wizard.budget];
+    const suggestions = giftSuggestions[wizard.budget] || [];
     resultsContainer.innerHTML = '';
-    
+
     suggestions.forEach(item => {
         const div = document.createElement('div');
         div.className = 'gift-card';
         div.innerHTML = `
-            <img src="${item.img}" style="width:100px; height:100px; object-fit:cover; border-radius:50%; border:3px solid var(--color-bg);" alt="${item.name}">
+            <img src="${item.img}" alt="${item.name}" loading="lazy">
             <h4>${item.name}</h4>
-            <p style="font-size:0.9rem; margin-bottom:1rem;">${item.desc}</p>
-            <a href="https://paccari.com/tienda/" target="_blank" class="buy-btn">Ver Detalles</a>
+            <p>${item.desc}</p>
+            <a href="https://paccari.com/tienda/" target="_blank" rel="noopener" class="buy-btn">Ver Detalles</a>
         `;
         resultsContainer.appendChild(div);
     });
-    
+
     stepResults.classList.add('active');
 }
 
 restartBtn.addEventListener('click', () => {
     wizard.occasion = null;
-    wizard.budget = null;
+    wizard.budget   = null;
     stepResults.classList.remove('active');
     step1.classList.add('active');
     updateProgress(0);
